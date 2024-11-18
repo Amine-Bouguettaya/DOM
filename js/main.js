@@ -9,16 +9,46 @@ function shuffleChildren(parent) {
     }
 }
 
+function showReaction(type, clickedBox) { 
+    clickedBox.classList.add(type);
+    if (type !== "success") {
+        setTimeout(function() {
+            clickedBox.classList.remove(type);
+        }, 800)
+    }
+}
+
 const box = document.createElement("div"); //add new html tag (div) stock new div in a variable to modify it in the future
 box.classList.add("box"); //add css class 
 const board = document.querySelector("#board"); //add parent div with board id to variable board
+
+let nb = 1;
 
 for (let i = 1; i <= 10; i++) { //loop that add 10 clones on the box
     let newBox = box.cloneNode(); //clone the box to a new variable
     newBox.innerText = i; //add text inside the box
     board.appendChild(newBox); //add the new cloned box to the board
-    newBox.addEventListener("click", function (){
-        console.log("Boite n."+ i +", click !")
+    newBox.addEventListener("click", function (){ //event listener of click
+        console.log("Boite n."+ i +", click !") // message in console
+        if (i == nb) { //check if good box (it is)
+            newBox.classList.add("box-clicked"); // add new class to the div to modify its color
+            if (nb == board.children.length){
+                board.querySelectorAll(".box").forEach(function(box) {
+                    showReaction("success", box);
+                })
+            }
+            nb++;
+        }
+        else if (i > nb) { // check if wrong box 
+            showReaction("error", newBox);
+            nb = 1;
+            board.querySelectorAll(".box-clicked").forEach(function(validBox){ // reset box color
+                validBox.classList.remove("box-clicked");
+            })
+        }
+        else { // case if the box has already been clicked because all other case have been manage
+            showReaction("notice", newBox);
+        }
     })
 }
 
